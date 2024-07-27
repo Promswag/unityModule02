@@ -1,18 +1,42 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Enemy : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    [SerializeField] private float healthPoints = 1;
+    [SerializeField] private float speed = 1;
+    [SerializeField] private int damage = 1;
+    private Base target;
+
+    public void SetTarget(Base target)
     {
-        
+        this.target = target;
     }
 
-    // Update is called once per frame
     void Update()
     {
-        
+        if (target != null)
+        {
+            Vector3 dir = target.transform.position - transform.position;
+            transform.Translate(dir.normalized * (speed * Time.deltaTime), Space.World);
+        }
+    }
+
+    void OnTriggerEnter2D(Collider2D collider)
+    {
+        if (collider.CompareTag("Base"))
+        {
+            target.TakeDamage(damage);
+            Destroy(gameObject);
+        }
+    }
+
+    public void TakeDamage(float damage)
+    {
+        Debug.Log(healthPoints);
+        healthPoints -= damage;
+        if (healthPoints <= 0)
+        {
+            Destroy(gameObject);
+        }
     }
 }
